@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeLeaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Consulta posting</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="main.js" type="text/javascript"></script>
+<!-- CSS only -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+<style>
+	h1{
+		text-align: center;
+		margin: 80px 80px 80px 80px;
+	}
+	body{
+		background-color: rgba(121, 121, 194, 0.322);
+		color:rgba(189, 133, 30, 0.959);
+		margin: 50px;
+		text-align: center;
+	}
+	td, th, tr{
+		padding: 5px 15px;
+		text-align: center;
+	}
+	th{
+		margin: 5px 15px;
+	}
+	table{
+		overflow: scroll;
+		margin-left: 50px;
+		padding: 100px;
+		text-align: center;
+	}
+	.inputclaro{
+		color:rgba(30, 189, 123, 0.938);
+	}
+	
+</style>
+</head>
+<body>
+<h1>Bienvenido a la app de gestión de empleados</h1>
+<p>¿Qué desea hacer ahora?</p>
+
+
+	<input type="button" name="submit" value="insertar empleado" id="insertar" class="insertar btn btn-success">
+	<input type="button" name="submit" value="Buscar por trabajo" id="buscar" class="btn btn-primary">
+	<form method="get" action="/home/">
+		<input type="submit" value="Ver listado completo" id="verlistadocompleto" class="insertar btn btn-info" style="visibility: hidden;">
+	</form>
+	
+<table>
+	<thead class="thead-dark"> <tr class="col"><th>id<th>nombre<th>trabajo<th>salario<th> Modificar<th>Borrado</tr>
+	</thead>
+	<tbody>
+	<tr th:if="${empleados.empty}"><td colspan="6">No hay ningún libro que mostrar</td></tr>
+	 	<tr th:each="empleado : ${empleados}" class="todosempleados">		
+		 	
+		 	<td clas="row"> <span th:text="${empleado.id}">			</span>		</td>	
+		 	<td> <span th:text="${empleado.name}">		</span>		</td>
+			<td> <span th:text="${empleado.job}">		</span>		</td>
+			<td> <span th:text="${empleado.salary}">		</span>		</td>
+			<td><button value="modificar" class="modifica btn btn-warning" th:value="${empleado.id}">Modificar</button></td>	
+			<td><a th:href="@{delete/}+${empleado.id}" class="btn btn-danger">Borrar</a></td>	
+	 	</tr>
+	 	<tr th:each="empleadocontrabajo : ${empleadoscontrabajo}" id="empleadoscontrabajo">		
+		 	
+		 	<td> <span th:text="${empleadocontrabajo.id}" class="existenempleados">			</span>		</td>	
+		 	<td> <span th:text="${empleadocontrabajo.name}">		</span>		</td>
+			<td> <span th:text="${empleadocontrabajo.job}">		</span>		</td>
+			<td> <span th:text="${empleadocontrabajo.salary}">		</span>		</td>
+			<td><button value="modificar" class="modifica btn btn-warning" th:value="${empleadocontrabajo.id}">Modificar</button></td>	
+			<td><a th:href="@{delete/}+${empleadocontrabajo.id}" class="btn btn-danger">Borrar</a></td>	
+	 	</tr>  
+
+	</tbody>
+</table>
+	
+<form class="formulario insertarempleado" style="visibility:hidden;" action="/home/create" method="post">
+<input type="text" id="name" name="name" placeholder="name" class="inputclaro">
+	<select id="stringJob" name="job" class="bg-secondary">
+  <option th:value="${job}" th:each="job: ${jobsList}" th:text="${job}" th:id="${job}"></option>
+</select>
+<input type="submit" name="submit" value="inserta" id="inserta"  class="btn btn-success">
+
+</form>
+<form class="formulario modificar" style="visibility:hidden;" action="/home/update/" method="post" id="form-cambiar">
+<input type="text" id="name" name="name" placeholder="name" class="inputclaro">
+	<select id="stringJob" name="job">
+  <option th:value="${job}" th:each="job: ${jobsList}" th:text="${job}" th:id="${job}"></option>
+</select>
+<input type="submit" name="submit" value="cambia" id="boton-cambiar" class="btn btn-success">
+
+</form>
+<form class="formulario buscar" style="visibility:hidden;" action="/home/searchByJob/" method="post">
+	<select id="stringJob" name="job" class="bg-secondary">
+  <option th:value="${job}" th:each="job: ${jobsList}" th:text="${job}" th:id="${job}"></option>
+	</select>
+	<input type="submit" value="busca" class="btn btn-success">
+	</form>
+<script type="text/javascript">
+$(document).ready(function(){
+	$(".insertarempleado").css("visibility", "hidden");
+  	$(".insertar").click(function(){
+    $(".insertarempleado").css("visibility","visible");
+	  });
+  $("#inserta").click(function(){
+	  //${chosenName} =  $("#name").val() ;
+	  //${chosenJob} =  $("#stringJob").val();
+  	//$.post('create/', )
+  });
+  $(".modifica").click(function(){
+		$(".modificar").css("visibility", "visible");
+		$("#id").attr("value", $(this).val());
+		$("#form-cambiar").attr("action","/home/update/"+$(this).val());
+  });
+  $("#buscar").click(function(){
+  		$(".buscar").css("visibility", "visible");
+  		});
+  if($(".existenempleados")[0]){
+	  $(".todosempleados").css("visibility", "collapse");
+	  $("#verlistadocompleto").css("visibility", "visible");
+  }
+  $("verlistadocompleto").click(function(){
+	  $(".todosempleados").css("visibility", "visible");
+	  $("#verlistadocompleto").css("visibility", "hidden");
+  })
+  
+});
+</script>
+</body>
+</html>
